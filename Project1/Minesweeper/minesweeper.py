@@ -255,8 +255,10 @@ class MinesweeperAI():
                         inferred_sentence = Sentence(sentence1.cells - sentence2.cells,
                                                      sentence1.count - sentence2.count)
                         if inferred_sentence not in self.knowledge:
-                            self.knowledge.append(inferred_sentence)
-                            changed = True
+                            # ensure new sentence does not contain known mines
+                            if len(inferred_sentence.known_mines()) == 0:
+                                self.knowledge.append(inferred_sentence)
+                                changed = True
 
     def make_safe_move(self):
         """
