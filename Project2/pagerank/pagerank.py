@@ -60,7 +60,9 @@ def transition_model(corpus, page, damping_factor):
     num_pages = len(corpus)
     probability_distribution = {}
 
+    # Look for links on current page
     if len(corpus[page]) > 0:
+        # choose a link
         for linked_page in corpus:
             probability_distribution[linked_page] = (1 - damping_factor) / num_pages
 
@@ -68,6 +70,7 @@ def transition_model(corpus, page, damping_factor):
         for linked_page in linked_pages:
             probability_distribution[linked_page] += damping_factor / len(linked_pages)
     else:
+        # choose random if we don't have anything
         for linked_page in corpus:
             probability_distribution[linked_page] = 1 / num_pages
 
@@ -90,6 +93,7 @@ def sample_pagerank(corpus, damping_factor, n):
     for _ in range(n):
         pagerank[current_page] += 1
         transition = transition_model(corpus, current_page, damping_factor)
+        # choose next page
         current_page = random.choices(list(transition.keys()), weights=transition.values(), k=1)[0]
 
     total_samples = sum(pagerank.values())
@@ -121,6 +125,7 @@ def iterate_pagerank(corpus, damping_factor):
                     total += damping_factor * pagerank[possible_page] / num_pages
             new_pagerank[page] = total
 
+        # check if all vlues have converged
         if all(abs(new_pagerank[page] - pagerank[page]) < 0.001 for page in corpus):
             break
 
